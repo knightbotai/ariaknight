@@ -32,6 +32,18 @@ The goal is simple:
 
 ## Recovery Setup
 
+Fast path:
+
+```powershell
+.\recover-openclaw.ps1
+```
+
+If the gateway listener is wedged and the clean restart path fails:
+
+```powershell
+.\recover-openclaw.ps1 -ForceGatewayRestart
+```
+
 Open PowerShell and set the recovery variables:
 
 ```powershell
