@@ -378,6 +378,56 @@ Only after the above is stable.
 
 ---
 
+## Adjacent operational workstreams
+
+These are important, but intentionally ordered after the memory foundation work.
+
+### A. Runtime disappearance / crash investigation
+
+Observed reality:
+
+- Richard reported Aria disappeared / crashed out and Codee had to restore service
+- current quick inspection did **not** reveal a clean dedicated crash trace in the available logs
+- currently visible logs are sparse (`config-audit.jsonl` present; no obvious app crash timeline captured in workspace logs)
+- current session token usage is high enough that context pressure may be a contributing operational risk, but that is **not** yet a proven sole root cause
+
+Working conclusion:
+
+- disappearance/root-cause remains **partially unresolved**
+- next diagnostic pass should gather a better crash timeline from AtomicBot/OpenClaw process logs, Windows Event Viewer if needed, restart sentinels, and session/runtime state
+- do not claim a root cause before that evidence exists
+
+Recommended order:
+
+1. finish stabilizing memory substrate
+2. collect a proper crash timeline
+3. document likely causes and mitigations
+
+### B. Local main-model cutover
+
+Observed reality:
+
+- current main assistant model is still `openai-codex/gpt-5.4`
+- local vLLM at `http://127.0.0.1:8000/v1` is alive
+- available local chat model verified: `huihui-qwen35-27b-abliterated-nvfp4`
+- Richard explicitly wants reduced dependence on remote APIs because token exhaustion currently creates operational fragility
+
+Recommended sequencing:
+
+1. stabilize memory/retrieval path first
+2. investigate disappearance/crash path second
+3. then cut the main assistant model over to local vLLM carefully
+
+Cutover notes:
+
+- define an explicit `models.providers.vllm` entry or use supported local provider configuration against `http://127.0.0.1:8000/v1`
+- add the model entry for `huihui-qwen35-27b-abliterated-nvfp4`
+- switch `agents.defaults.model.primary`
+- verify chat + tool behavior after restart
+- keep a fallback path documented in case local-model behavior is insufficient for some tasks
+
+---
+
 ## What to avoid
 
 - making embedded SQLite vector memory the permanent architecture center
